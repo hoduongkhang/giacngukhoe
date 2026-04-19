@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>SleepSync</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 340px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+    margin-bottom: 10px;
+    font-size: 22px;
+}
+
+select, input {
+    width: 80%;
+    padding: 8px;
+    margin-top: 10px;
+}
+
+#labelText {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #333;
+}
+
+button {
+    margin-top: 15px;
+    padding: 8px 16px;
+    background: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.result {
+    margin-top: 20px;
+}
+
+.time {
+    margin: 5px 0;
+    padding: 6px;
+}
+
+.good { color: green; }
+.ok { color: orange; }
+.bad { color: red; }
+
+.note {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #555;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>SleepSync</h1>
+
+    <select id="mode">
+        <option value="wake">Tính giờ nên ngủ từ giờ thức dậy</option>
+        <option value="sleep">Tính giờ nên thức dậy từ giờ ngủ</option>
+    </select>
+
+    <!-- DÒNG BẠN MUỐN -->
+    <div id="labelText">Tôi muốn thức dậy vào lúc:</div>
+
+    <input type="time" id="timeInput">
+    <br>
+    <button onclick="calculate()">Tính</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+
+// đổi text theo mode
+document.getElementById("mode").addEventListener("change", function() {
+    let text = this.value === "wake"
+        ? "Tôi muốn thức dậy vào lúc:"
+        : "Tôi muốn đi ngủ vào lúc:";
+    
+    document.getElementById("labelText").innerText = text;
+});
+
+function calculate() {
+    let mode = document.getElementById("mode").value;
+    let time = document.getElementById("timeInput").value;
+
+    if (!time) {
+        document.getElementById("result").innerHTML = "Vui lòng nhập giờ";
+        return;
+    }
+
+    let [h, m] = time.split(":").map(Number);
+    let html = "";
+
+    if (mode === "wake") {
+        html = "Giờ nên đi ngủ:<br>";
+
+        for (let i = 6; i >= 3; i--) {
+            let total = h * 60 + m - i * 90;
+            let hour = Math.floor((total / 60) % 24);
+            let minute = total % 60;
+
+            if (minute < 0) {
+                minute += 60;
+                hour--;
+            }
+            if (hour < 0) hour += 24;
+
+            let cls = i >= 5 ? "good" : (i === 4 ? "ok" : "bad");
+
+            html += `<div class="time ${cls}">
+                ${hour.toString().padStart(2, '0')}:
+                ${minute.toString().padStart(2, '0')}
+            </div>`;
+        }
+
+    } else {
+        html = "Giờ nên thức dậy:<br>";
+
+        for (let i = 3; i <= 6; i++) {
+            let total = h * 60 + m + i * 90;
+            let hour = Math.floor((total / 60) % 24);
+            let minute = total % 60;
+
+            if (minute < 0) {
+                minute += 60;
+                hour--;
+            }
+            if (hour < 0) hour += 24;
+
+            let cls = i >= 5 ? "good" : (i === 4 ? "ok" : "bad");
+
+            html += `<div class="time ${cls}">
+                ${hour.toString().padStart(2, '0')}:
+                ${minute.toString().padStart(2, '0')}
+            </div>`;
+        }
+    }
+
+    html += `<div class="note">
+        Xanh: tốt, Cam: tạm, Đỏ: không nên
+    </div>`;
+
+    document.getElementById("result").innerHTML = html;
+}
+</script>
+
+</body>
+</html>

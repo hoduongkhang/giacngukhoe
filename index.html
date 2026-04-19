@@ -12,6 +12,13 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    transition: 0.3s;
+}
+
+/* DARK MODE */
+body.dark {
+    background: #1e1e1e;
+    color: white;
 }
 
 .container {
@@ -21,11 +28,27 @@ body {
     width: 340px;
     text-align: center;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    transition: 0.3s;
+}
+
+body.dark .container {
+    background: #2a2a2a;
+    color: white;
 }
 
 h1 {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     font-size: 22px;
+}
+
+.desc {
+    font-size: 13px;
+    margin-bottom: 15px;
+    color: gray;
+}
+
+body.dark .desc {
+    color: #bbb;
 }
 
 select, input {
@@ -37,7 +60,6 @@ select, input {
 #labelText {
     margin-top: 15px;
     font-size: 14px;
-    color: #333;
 }
 
 button {
@@ -47,6 +69,13 @@ button {
     color: white;
     border: none;
     cursor: pointer;
+}
+
+/* toggle dark mode */
+.toggle {
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 14px;
 }
 
 .result {
@@ -67,6 +96,10 @@ button {
     font-size: 13px;
     color: #555;
 }
+
+body.dark .note {
+    color: #ccc;
+}
 </style>
 </head>
 
@@ -75,15 +108,26 @@ button {
 <div class="container">
     <h1>SleepSync</h1>
 
+    <!-- mô tả -->
+    <div class="desc">
+        Ứng dụng giúp bạn tính giờ ngủ / thức dậy hợp lý theo chu kỳ giấc ngủ 90 phút.
+    </div>
+
+    <!-- DARK MODE TOGGLE -->
+    <div class="toggle" onclick="toggleDark()">
+        🌙 / ☀️ Chế độ sáng tối
+    </div>
+
     <select id="mode">
         <option value="wake">Tính giờ nên ngủ từ giờ thức dậy</option>
         <option value="sleep">Tính giờ nên thức dậy từ giờ ngủ</option>
     </select>
 
-    <!-- DÒNG BẠN MUỐN -->
     <div id="labelText">Tôi muốn thức dậy vào lúc:</div>
 
-    <input type="time" id="timeInput">
+    <!-- 24H TIME -->
+    <input type="time" id="timeInput" step="60">
+
     <br>
     <button onclick="calculate()">Tính</button>
 
@@ -91,6 +135,11 @@ button {
 </div>
 
 <script>
+
+// dark mode
+function toggleDark() {
+    document.body.classList.toggle("dark");
+}
 
 // đổi text theo mode
 document.getElementById("mode").addEventListener("change", function() {
@@ -159,7 +208,7 @@ function calculate() {
     }
 
     html += `<div class="note">
-        Xanh: tốt, Cam: tạm, Đỏ: không nên
+        Xanh: tốt • Cam: tạm • Đỏ: không nên
     </div>`;
 
     document.getElementById("result").innerHTML = html;
